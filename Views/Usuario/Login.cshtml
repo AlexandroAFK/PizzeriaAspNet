@@ -1,13 +1,13 @@
 ﻿@model Proyecto4A.Models.Usuario
 
-<h5>Login al sistema 2</h5>
+<h5>Login al sistema</h5>
 
 @if (!string.IsNullOrEmpty(ViewBag.Message))
 {
     <p>@ViewBag.Message</p>
 }
 
-<form action="Verificar" method="get">
+<form action="@Url.Action("Verificar", "Usuario")" method="get">
     <label>Usuario: </label>
     <input type="text" name="usuario" value="@Model?.usuario" /><br />
     <label>Contraseña: </label>

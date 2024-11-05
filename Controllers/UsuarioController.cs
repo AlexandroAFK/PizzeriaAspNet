@@ -37,7 +37,7 @@ namespace Proyecto4A.Controllers
                 return View("Error");
             }
         }
-        public IActionResult Registro()
+        public IActionResult Crear()
         {
             return View("Registro");
         }

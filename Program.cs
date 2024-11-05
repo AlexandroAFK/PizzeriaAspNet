@@ -18,26 +18,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Usuario}/{action=Login}/{id?}");
-
-app.MapControllerRoute(
-    name: "verificar",
-    pattern: "Verificar",
-    defaults: new { controller = "Usuario", action = "Verificar" });
-
-app.MapControllerRoute(
-    name: "eliminar",
-    pattern: "Eliminar",
-    defaults: new { controller = "Usuario", action = "Eliminar" });
-
-app.MapControllerRoute(
-    name: "editar",
-    pattern: "Editar",
-    defaults: new { controller = "Usuario", action = "Editar" });
-
-app.MapControllerRoute(
-    name: "registro",
-    pattern: "Registro",
-    defaults: new { controller = "Usuario", action = "Registro" });
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

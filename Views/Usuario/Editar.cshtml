@@ -7,7 +7,7 @@
     <p>@ViewBag.Message</p>
 }
 
-<form action="Actualizar" method="post">
+<form action="@Url.Action("Actualizar", "Usuario")" method="post">
     <input type="hidden" name="codigo" value="@Model.codigo" />
     <label>Usuario: </label>
     <input type="text" name="usuario" value="@Model.usuario" required /><br />
