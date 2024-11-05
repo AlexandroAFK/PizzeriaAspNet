@@ -1,0 +1,18 @@
+﻿@model Proyecto4A.Models.Usuario
+
+<h5>Login al sistema 2</h5>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p>@ViewBag.Message</p>
+}
+
+<form action="Verificar" method="get">
+    <label>Usuario: </label>
+    <input type="text" name="usuario" value="@Model?.usuario" /><br />
+    <label>Contraseña: </label>
+    <input type="text" name="clave" value="@Model?.clave" /><br />
+    <input type="submit" value="Ingresar" class="btn btn-primary"  /><br />
+</form>
+<br />
+<a href="@Url.Action("Registro", "Usuario")" class="btn btn-primary">Regístrate</a>

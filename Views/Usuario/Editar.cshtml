@@ -1,0 +1,20 @@
+﻿@model Proyecto4A.Models.Usuario
+
+<h5>Editar Usuario</h5>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p>@ViewBag.Message</p>
+}
+
+<form action="Actualizar" method="post">
+    <input type="hidden" name="codigo" value="@Model.codigo" />
+    <label>Usuario: </label>
+    <input type="text" name="usuario" value="@Model.usuario" required /><br />
+    <label>Contraseña: </label>
+    <input type="text" name="clave" value="@Model.clave" required /><br />
+    <label>Nivel: </label>
+    <input type="number" name="nivel" value="@Model.nivel" required /><br />
+    <input type="submit" value="Actualizar" class="btn btn-primary" /><br />
+</form>
+<a href="@Url.Action("Login", "Usuario")" class="btn btn-primary">Volver</a>

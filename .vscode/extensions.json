@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "schneiderpat.aspnet-helper",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "github.vscode-pull-request-github",
+        "ms-vsliveshare.vsliveshare",
+        "ms-ceintl.vscode-language-pack-es",
+        "vivaxy.vscode-conventional-commits"
+    ]
+}

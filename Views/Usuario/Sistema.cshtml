@@ -1,0 +1,37 @@
+﻿@model List<Proyecto4A.Models.Usuario>
+
+<h1>Bienvenido al Sistema de Almacen</h1>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p>@ViewBag.Message</p>
+}
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Usuario</th>
+            <th>Clave</th>
+            <th>Nivel</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>@usuario.codigo</td>
+                <td>@usuario.usuario</td>
+                <td>@usuario.clave</td>
+                <td>@usuario.nivel</td>
+                <td>
+                    <a href="@Url.Action("Eliminar", new { codigo = usuario.codigo })">Eliminar</a>
+                    <a href="@Url.Action("Editar", new { codigo = usuario.codigo })">Editar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<a href="@Url.Action("Login", "Usuario")" class="btn btn-primary">Volver al Login</a>
