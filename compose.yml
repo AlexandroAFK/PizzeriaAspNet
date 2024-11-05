@@ -1,0 +1,28 @@
+services:
+  asp:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    environment:
+      - ASP=  dotnet /app/out/Proyecto4A.dll
+      - PILAR=dotnet publish -c Release -o out
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8001:8080"
+    volumes:
+      - .:/app
+    working_dir: /app
+    tty: true
+    command: bash -c "dotnet restore && sleep infinity"
+  
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: 'dbpizza'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'pass'
+      MYSQL_ROOT_PASSWORD: 'rootpass'
+
+  adminer:
+    image: adminer
+    ports:
+      - 8002:8080
+    restart: always
