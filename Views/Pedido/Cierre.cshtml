@@ -1,0 +1,68 @@
+﻿@using Proyecto4A.Models.dbpizza
+@model List<Proyecto4A.Models.dbpizza.Pizza>
+@{
+    ViewData["Title"] = "Cierre de Pedidos";
+    var totalVentas = ViewBag.TotalVentas;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="@Url.Content("~/css/pizzeria.css")">
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <h1>Cierre de ventas.</h1>
+    <br />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Número de Producto</th>
+                <th>Pizzas</th>
+                <th>Creados</th>
+                <th>Pagados</th>
+                <th>Preparados</th>
+                <th>Entregados</th>
+                <th>Cancelados</th>
+                <th>Total pedidos</th>
+                <th>Total Ventas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center;">No hay pedidos registrados</td>
+                </tr>
+            }
+            else
+            {
+                GestorDBPizza gestor = new GestorDBPizza();
+                @foreach (var pizza in Model)
+                {
+                    <tr>
+                        <td>@pizza.Id</td>
+                        <td>@pizza.Nombre</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 1)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 2)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 3)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 4)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 5)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id)</td>
+                        <td>@gestor.ObtenerTotalVentasPorPizza(pizza.Id)</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="2" style="text-align: right; font-weight: bold;">Total Ventas</td>
+                    <td colspan="2" style="text-align: center; font-weight: bold;">@ViewBag.TotalCantidadVendidas</td>
+                    <td colspan="5" style="text-align: center; font-weight: bold;">@ViewBag.TotalVentas</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="@Url.Action("Crear", "Pedido")">Nuevo Pedido</a>
+</body>
+</html>

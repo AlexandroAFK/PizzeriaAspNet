@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="@Url.Content("~/css/pizzeria.css")">
+    <title>Realiza tu Pedido!</title>
+</head>
+<body>
+    <h2>Realizar Pedido</h2>
+
+    @Html.ValidationSummary(true, "Errores al enviar los datos:")
+
+    <form asp-action="Guardar" asp-controller="Pedido" method="post" class="form">
+        <label for="cliente">Cliente: </label>
+        <select id="cliente" name="cliente" required>
+            @foreach (var cliente in ViewBag.Clientes)
+            { 
+                <option value="@cliente.Id">@cliente.Usuario</option>
+            }
+        </select>
+        @Html.ValidationMessage("cliente", "", new { @class = "text-danger" })
+
+        <!-- Contenedor flex para dividir Pizza y Precio en dos mitades -->
+        <div class="half-container">
+            <div class="half">
+                <label for="pizza">Pizza: </label>
+                <select id="pizza" name="pizza" onchange="updatePrecio()" required>
+                    @if (ViewBag.Pizzas != null && ViewBag.Pizzas.Count > 0)
+                    {
+                        foreach (var pizza in ViewBag.Pizzas)
+                        {
+                            <option value="@pizza.Id" data-precio="@pizza.Precio">@pizza.Nombre</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="">No hay pizzas disponibles</option>
+                    }
+                </select>
+                @Html.ValidationMessage("pizza", "", new { @class = "text-danger" })
+            </div>
+
+            <div class="half">
+                <label for="precio">Precio:</label>
+                <input type="text" id="precio" name="precio" readonly />
+            </div>
+        </div>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" name="cantidad" min="1" value="1" required />
+        @Html.ValidationMessage("cantidad", "", new { @class = "text-danger" })
+
+        <button type="submit" class="btn btn-primary">Procesar</button>
+        <button type="button" class="btn btn-secondary" onclick="verPedidosCliente()">Ver pedidos</button>
+        <a asp-action="Cierre" asp-controller="Pedido" style="text-align: center; width: 100%; height: 100%;">Ir a Cierre de Ventas</a>  
+    </form>
+
+    @section Scripts {
+        <script>
+            function updatePrecio() {
+                const select = document.getElementById('pizza');
+                const precioInput = document.getElementById('precio');
+                const selectedOption = select.options[select.selectedIndex];
+                const precio = selectedOption.getAttribute('data-precio');
+
+                // Actualiza el campo de precio
+                precioInput.value = precio ? '$' + precio : '';
+            }
+
+            // Llama a la función para establecer el precio inicial
+            window.onload = updatePrecio;
+
+            function verPedidosCliente() {
+                const clienteSelect = document.getElementById('cliente');
+                const clienteId = clienteSelect.value;
+
+                if (clienteId) {
+                    window.location.href = `@Url.Action("Index", "Pedido")?clienteId=${clienteId}`;
+                } else {
+                    alert("Por favor, selecciona un cliente.");
+                }
+            }
+        </script>
+    }
+</body>
+</html>

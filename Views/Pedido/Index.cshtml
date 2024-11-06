@@ -1,0 +1,105 @@
+﻿@model List<Proyecto4A.Models.dbpizza.Pedido>
+@{
+    ViewData["Title"] = "Lista de Pedidos";
+    var clienteId = ViewBag.ClienteId;
+    var estado = ViewBag.Estado;
+    var totalPedidos = ViewBag.TotalPedidos;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="@Url.Content("~/css/pizzeria.css")">
+    <title>Lista de pedidos</title>
+</head>
+<body>
+    <h1>Administra los pedidos de: @ViewBag.ClienteUsuario (@ViewBag.ClienteId)</h1>
+
+    <div>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 0 })">Ver todos</a>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 1 })">Pedidos Creados</a>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 2 })">Pedidos Pagados</a>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 3 })">Pedidos Preparados</a>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 4 })">Pedidos Entregados</a>
+        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 5 })">Pedidos Cancelados</a>
+    </div>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>N° Pedido</th>
+                <th>Pizza</th>
+                <th>Cantidad</th>
+                <th>Precio Unidad</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr>
+                    <td colspan="7" style="text-align:center;">No hay pedidos registrados</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var pedido in Model)
+                {
+                    string botonTexto = "";
+                    int siguienteEstado = 0;
+                    
+                    if (pedido.Estado == 1) {
+                        botonTexto = "Pagado";
+                        siguienteEstado = 2;
+                    } else if (pedido.Estado == 2) {
+                        botonTexto = "Preparando";
+                        siguienteEstado = 3;
+                    } else if (pedido.Estado == 3) {
+                        botonTexto = "Entregado";
+                        siguienteEstado = 4;
+                    }
+
+                    <tr>
+                        <td>@pedido.Id</td>
+                        <td>@pedido.GetNombrePizza()</td>
+                        <td>@pedido.Cantidad</td>
+                        <td>@pedido.GetPrecioUnidad()</td>
+                        <td>@pedido.Total</td>
+                        <td><strong>@pedido.GetEstadoNombre()</strong></td>
+                        <td class="index-buttons">
+                            @if (pedido.GetEstado() != 5 && pedido.GetEstado() != 4 && !string.IsNullOrEmpty(botonTexto)) 
+                            {
+                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = 5 })" method="post" style="display:inline;">
+                                    <button type="submit">Cancelar</button>
+                                </form>
+                            }
+                            @if (!string.IsNullOrEmpty(botonTexto)) 
+                            {
+                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = siguienteEstado })" method="post" style="display:inline;">
+                                    <button type="submit">Marcar como <strong>@botonTexto</strong></button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span>Finalizado</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (estado == 0 && totalPedidos > 0)
+    {
+        <h3>Total de Ventas: @totalPedidos.ToString("F2")</h3>
+    }
+
+    <a asp-action="Crear" asp-controller="Pedido">Nuevo Pedido</a>
+    <br />
+    <a asp-action="Cierre" asp-controller="Pedido">Ir a Cierre de Ventas</a> 
+</body>
+</html>

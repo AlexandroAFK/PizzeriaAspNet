@@ -1,6 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 
-namespace Proyecto4A.Models
+namespace Proyecto4A.Models.dbpizza
 {
     public class ConectaBDPizza
     {
@@ -11,7 +11,7 @@ namespace Proyecto4A.Models
         private static string clave = "rootpass";
         public static string url = "";
 
-        public static MySqlConnection abrir()
+        public static MySqlConnection Abrir()
         {
             try
             {
