@@ -21,12 +21,13 @@
             <tr>
                 <th>Número de Producto</th>
                 <th>Pizzas</th>
-                <th>Creados</th>
+                <th>Precio unidad actual (S/.)</th>
+                @* <th>Creados</th>
                 <th>Pagados</th>
                 <th>Preparados</th>
                 <th>Entregados</th>
-                <th>Cancelados</th>
-                <th>Total pedidos</th>
+                <th>Cancelados</th> *@
+                <th>Total vendidas</th>
                 <th>Total Ventas</th>
             </tr>
         </thead>
@@ -45,19 +46,20 @@
                     <tr>
                         <td>@pizza.Id</td>
                         <td>@pizza.Nombre</td>
-                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 1)</td>
+                        <td>@gestor.ObtenerPizzaPorId(pizza.Id).Precio</td>
+                        @* <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 1)</td>
                         <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 2)</td>
                         <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 3)</td>
                         <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 4)</td>
-                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 5)</td>
-                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id)</td>
-                        <td>@gestor.ObtenerTotalVentasPorPizza(pizza.Id)</td>
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 5)</td> *@
+                        <td>@gestor.ObtenerCantidadVentasPorPizza(pizza.Id, 0, 5)</td>
+                        <td>@gestor.ObtenerTotalVentasPorPizza(pizza.Id, 0, 5)</td>
                     </tr>
                 }
                 <tr>
-                    <td colspan="2" style="text-align: right; font-weight: bold;">Total Ventas</td>
-                    <td colspan="2" style="text-align: center; font-weight: bold;">@ViewBag.TotalCantidadVendidas</td>
-                    <td colspan="5" style="text-align: center; font-weight: bold;">@ViewBag.TotalVentas</td>
+                    <td colspan="3" style="text-align: center; font-weight: bold;">Total Ventas</td>
+                    <td colspan="1" style="text-align: left; font-weight: bold;">@ViewBag.TotalCantidadVendidas</td>
+                    <td colspan="1" style="text-align: left; font-weight: bold;">@ViewBag.TotalVentas</td>
                 </tr>
             }
         </tbody>

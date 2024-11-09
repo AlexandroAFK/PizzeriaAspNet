@@ -17,7 +17,6 @@
     <h1>Administra los pedidos de: @ViewBag.ClienteUsuario (@ViewBag.ClienteId)</h1>
 
     <div>
-        <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 0 })">Ver todos</a>
         <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 1 })">Pedidos Creados</a>
         <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 2 })">Pedidos Pagados</a>
         <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 3 })">Pedidos Preparados</a>
@@ -30,9 +29,9 @@
             <tr>
                 <th>N° Pedido</th>
                 <th>Pizza</th>
+                <th>Precio Unidad (S/.)</th>
                 <th>Cantidad</th>
-                <th>Precio Unidad</th>
-                <th>Total</th>
+                <th>Total (S/.)</th>
                 <th>Estado</th>
                 <th>Acción</th>
             </tr>
@@ -62,23 +61,38 @@
                         siguienteEstado = 4;
                     }
 
+                    var PedidoEstado = pedido.GetEstado();
+
                     <tr>
                         <td>@pedido.Id</td>
                         <td>@pedido.GetNombrePizza()</td>
-                        <td>@pedido.Cantidad</td>
                         <td>@pedido.GetPrecioUnidad()</td>
+                        <td>@pedido.Cantidad</td>
                         <td>@pedido.Total</td>
-                        <td><strong>@pedido.GetEstadoNombre()</strong></td>
+                        <td><strong style="color:@PedidoEstado.Color;">@PedidoEstado.Nombre</strong></td>
                         <td class="index-buttons">
-                            @if (pedido.GetEstado() != 5 && pedido.GetEstado() != 4 && !string.IsNullOrEmpty(botonTexto)) 
-                            {
-                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = 5 })" method="post" style="display:inline;">
+                            @if (PedidoEstado.Id != 5 && PedidoEstado.Id != 4 && !string.IsNullOrEmpty(botonTexto)) 
+                            {   
+                                int redirectTo;
+                                @if (estado == 0) {
+                                    redirectTo = 0;
+                                } else {
+                                    redirectTo = 5;
+                                }
+                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = 5, redirectEstado = redirectTo })" method="post" style="display:inline;">
                                     <button type="submit">Cancelar</button>
                                 </form>
                             }
                             @if (!string.IsNullOrEmpty(botonTexto)) 
                             {
-                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = siguienteEstado })" method="post" style="display:inline;">
+                                int redirectTo;
+                                @if (estado == 0) {
+                                    redirectTo = 0;
+                                } else {
+                                    redirectTo = siguienteEstado;
+                                }
+
+                                <form action="@Url.Action("Actualizar", "Pedido", new { idPedido = pedido.Id, clienteId = pedido.ClienteId , nuevoEstado = siguienteEstado, redirectEstado = redirectTo })" method="post" style="display:inline;">
                                     <button type="submit">Marcar como <strong>@botonTexto</strong></button>
                                 </form>
                             }
@@ -100,6 +114,8 @@
 
     <a asp-action="Crear" asp-controller="Pedido">Nuevo Pedido</a>
     <br />
+    <br />
+    <a href="@Url.Action("Index", "Pedido", new { clienteId = clienteId, estado = 0 })">Ir a boleta del cliente</a>
     <a asp-action="Cierre" asp-controller="Pedido">Ir a Cierre de Ventas</a> 
 </body>
 </html>

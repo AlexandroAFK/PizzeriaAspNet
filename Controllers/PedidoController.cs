@@ -27,7 +27,7 @@ namespace Proyecto4A.Controllers
             double totalPedidos = 0;
             if (estado == 0)
             {
-                totalPedidos = pedidos.Sum(p => p.Total);
+                totalPedidos = pedidos.Where(p => p.Estado != 5).Sum(p => p.Total);
             }
             ViewBag.TotalPedidos = totalPedidos;
 
@@ -80,7 +80,7 @@ namespace Proyecto4A.Controllers
         }
 
         [HttpPost]
-        public ActionResult Actualizar(int idPedido, int clienteId, int nuevoEstado)
+        public ActionResult Actualizar(int idPedido, int clienteId, int nuevoEstado, int redirectEstado = 0)
         {
             if (idPedido <= 0 || clienteId <= 0 || nuevoEstado <= 0){
                 return NotFound("No se puede actualizar el pedido, Datos invalidos"); 
@@ -88,12 +88,17 @@ namespace Proyecto4A.Controllers
 
             Pedido pedidoActual = gestor.ObtenerPedidoPorId(idPedido);
 
-            if (pedidoActual != null && pedidoActual.GetEstado() != nuevoEstado) {
+            if (pedidoActual != null && pedidoActual.GetEstado().Id != nuevoEstado) {
                 gestor.ActualizarEstadoPedido(idPedido, nuevoEstado);
-                return RedirectToAction("Index", new { clienteId = clienteId, estado = pedidoActual.Estado });
+
+                if (redirectEstado != 0){
+                    redirectEstado = pedidoActual.Estado;
+                }
+
+                return RedirectToAction("Index", new { clienteId = clienteId, estado = redirectEstado });
             }
             
-            return RedirectToAction("Index", new { clienteId = clienteId, estado = pedidoActual.Estado });
+            return RedirectToAction("Index", new { clienteId = clienteId });
         }
 
         [HttpGet]
@@ -105,8 +110,8 @@ namespace Proyecto4A.Controllers
             int totalCantidadVendidas = 0;
             for (int i = 0; i < pizzasList.Count; i++)
             {
-                totalCantidadVendidas += gestor.ObtenerCantidadVentasPorPizza(pizzasList[i].Id);
-                totalVentas += gestor.ObtenerTotalVentasPorPizza(pizzasList[i].Id);
+                totalCantidadVendidas += gestor.ObtenerCantidadVentasPorPizza(pizzasList[i].Id, 0, 5);
+                totalVentas += gestor.ObtenerTotalVentasPorPizza(pizzasList[i].Id, 0, 5);
             }
 
             ViewBag.TotalCantidadVendidas = totalCantidadVendidas;

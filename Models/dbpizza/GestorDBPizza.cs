@@ -250,8 +250,9 @@ namespace Proyecto4A.Models.dbpizza
                 {
                     int id = reader.GetInt32("id");
                     string nombre = reader.GetString("nombre");
-                    estado = new Estado(id, nombre);
-                    return estado;
+                    string color = reader.IsDBNull(reader.GetOrdinal("color")) ? "" : reader.GetString("color");
+
+                    estado = new Estado(id, nombre, color);
                 }
             }
             catch (Exception e)
@@ -263,6 +264,11 @@ namespace Proyecto4A.Models.dbpizza
                 if (reader != null) reader.Close();
                 if (cmd != null) cmd.Dispose();
                 if (con != null) con.Close();
+            }
+
+            if (estado == null)
+            {
+                throw new Exception("Estado no encontrado: " + estadoId);
             }
 
             return estado;
@@ -381,56 +387,26 @@ namespace Proyecto4A.Models.dbpizza
                 if (con != null) con.Close();
             }
         }
-        public double ObtenerTotalVentasPorPizza(int pizzaId)
+        public double ObtenerTotalVentasPorPizza(int pizzaId, int estadoFiltrado = 0, int estadoExcluido = 0)
         {
             MySqlConnection con = null;
             MySqlCommand cmd = null;
             MySqlDataReader reader = null;
             double totalVentas = 0.0;
 
-            // Consulta para sumar el total de las ventas de los pedidos de una pizza específica
+            // Construcción de la consulta con las condiciones de estadoFiltrado y estadoExcluido
             string sql = "SELECT SUM(total) AS total_ventas FROM pedidos WHERE pizza_id = @pizza_id";
-
-            try
-            {
-                con = ConectaBDPizza.Abrir();  // Abre la conexión a la base de datos
-                cmd = new MySqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@pizza_id", pizzaId);  // Usamos parámetros para evitar inyecciones SQL
-                reader = cmd.ExecuteReader();  // Ejecutamos la consulta
-
-                if (reader.Read())  // Verificamos si hay resultados
-                {
-                    totalVentas = reader.IsDBNull(reader.GetOrdinal("total_ventas")) ? 0 : reader.GetDouble("total_ventas");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error al obtener el total de ventas de pedidos por pizza: " + e.Message);
-            }
-            finally
-            {
-                // Cerramos los recursos
-                if (reader != null) reader.Close();
-                if (cmd != null) cmd.Dispose();
-                if (con != null) con.Close();
-            }
-
-            return totalVentas;
-        }
-
-        public int ObtenerCantidadVentasPorPizza(int pizzaId, int estado = 0) 
-        {
-            MySqlConnection con = null;
-            MySqlCommand cmd = null;
-            MySqlDataReader reader = null;
-            int totalCantidad = 0; // Variable para almacenar la cantidad total de pizzas
-
-            // Consulta para sumar la cantidad de ventas de una pizza específica, con un filtro por estado
-            string sql = "SELECT SUM(cantidad) AS total FROM pedidos WHERE pizza_id = @pizza_id";
             
-            if (estado != 0)  // Si estado no es 0, filtrar por el estado
+            // Filtrar por estadoFiltrado si se pasa
+            if (estadoFiltrado != 0)
             {
-                sql += " AND estado = @estado";
+                sql += " AND estado = @estadoFiltrado";
+            }
+
+            // Excluir estadoExcluido si se pasa
+            if (estadoExcluido != 0)
+            {
+                sql += " AND estado != @estadoExcluido";
             }
 
             try
@@ -439,14 +415,82 @@ namespace Proyecto4A.Models.dbpizza
                 cmd = new MySqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@pizza_id", pizzaId);
 
-                if (estado != 0)
+                // Añadir el parámetro estadoFiltrado si se pasa
+                if (estadoFiltrado != 0)
                 {
-                    cmd.Parameters.AddWithValue("@estado", estado);
+                    cmd.Parameters.AddWithValue("@estadoFiltrado", estadoFiltrado);
                 }
 
-                reader = cmd.ExecuteReader();  // Ejecutamos la consulta
+                // Añadir el parámetro estadoExcluido si se pasa
+                if (estadoExcluido != 0)
+                {
+                    cmd.Parameters.AddWithValue("@estadoExcluido", estadoExcluido);
+                }
 
-                if (reader.Read())  // Verificamos si hay resultados
+                reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    totalVentas = reader.IsDBNull(reader.GetOrdinal("total_ventas")) ? 0.0 : reader.GetDouble("total_ventas");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error al obtener el total de ventas de pedidos por pizza: " + e.Message);
+            }
+            finally
+            {
+                if (reader != null) reader.Close();
+                if (cmd != null) cmd.Dispose();
+                if (con != null) con.Close();
+            }
+
+            return totalVentas;
+        }
+
+        public int ObtenerCantidadVentasPorPizza(int pizzaId, int estadoFiltrado = 0, int estadoExcluido = 0)
+        {
+            MySqlConnection con = null;
+            MySqlCommand cmd = null;
+            MySqlDataReader reader = null;
+            int totalCantidad = 0;
+
+            // Construcción de la consulta con las condiciones de estadoFiltrado y estadoExcluido
+            string sql = "SELECT SUM(cantidad) AS total FROM pedidos WHERE pizza_id = @pizza_id";
+            
+            // Filtrar por estadoFiltrado si se pasa
+            if (estadoFiltrado != 0)
+            {
+                sql += " AND estado = @estadoFiltrado";
+            }
+
+            // Excluir estadoExcluido si se pasa
+            if (estadoExcluido != 0)
+            {
+                sql += " AND estado != @estadoExcluido";
+            }
+
+            try
+            {
+                con = ConectaBDPizza.Abrir();
+                cmd = new MySqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@pizza_id", pizzaId);
+
+                // Añadir el parámetro estadoFiltrado si se pasa
+                if (estadoFiltrado != 0)
+                {
+                    cmd.Parameters.AddWithValue("@estadoFiltrado", estadoFiltrado);
+                }
+
+                // Añadir el parámetro estadoExcluido si se pasa
+                if (estadoExcluido != 0)
+                {
+                    cmd.Parameters.AddWithValue("@estadoExcluido", estadoExcluido);
+                }
+
+                reader = cmd.ExecuteReader();
+
+                if (reader.Read())
                 {
                     totalCantidad = reader.IsDBNull(reader.GetOrdinal("total")) ? 0 : reader.GetInt32("total");
                 }
@@ -457,7 +501,6 @@ namespace Proyecto4A.Models.dbpizza
             }
             finally
             {
-                // Cerramos los recursos
                 if (reader != null) reader.Close();
                 if (cmd != null) cmd.Dispose();
                 if (con != null) con.Close();

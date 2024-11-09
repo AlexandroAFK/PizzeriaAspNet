@@ -1,7 +1,7 @@
 using System;
+using Proyecto4A.Models.dbpizza;
 
 namespace Proyecto4A.Models.dbpizza;
-
 public class Pedido
 {
     public int Id { get; set; }
@@ -21,7 +21,7 @@ public class Pedido
 
         if (estado == 0)
         {
-            Estado = GetEstado();
+            Estado = GetEstado().Id;
         }
         else
         {
@@ -38,18 +38,11 @@ public class Pedido
         return precioPizza * Cantidad;
     }
 
-    public int GetEstado()
+    public Estado GetEstado()
     {
         GestorDBPizza gestor = new GestorDBPizza();
-        var estado = gestor.ObtenerEstadoPorId(Id);
-        return estado != null ? estado.Id : 0;
-    }
-
-    public string GetEstadoNombre()
-    {
-        GestorDBPizza gestor = new GestorDBPizza();
-        var estadoNombre = gestor.ObtenerEstadoPorId(Estado).Nombre;
-        return estadoNombre != null ? estadoNombre : "No definido";
+        var estado = gestor.ObtenerEstadoPorId(Estado);
+        return estado ?? new Estado(0, "Estado desconocido", "#000000");
     }
 
     public string GetNombrePizza()
