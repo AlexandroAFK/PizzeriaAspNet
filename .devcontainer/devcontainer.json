@@ -1,0 +1,25 @@
+{
+  "name": "Proyecto4A Dev Container",
+  "dockerComposeFile": "./compose.yml",
+  "service": "asp",
+  "workspaceFolder": "/app",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "editor.formatOnSave": true
+  },
+  "extensions": [
+    "ms-dotnettools.csharp",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode.vscode-typescript-next"
+  ],
+  "postCreateCommand": "dotnet restore && dotnet publish -c Release -o out",
+  "portsAttributes": {
+    "8001": {
+      "label": "ASP.NET Core App"
+    },
+    "8002": {
+      "label": "Adminer"
+    }
+  },
+  "remoteUser": "vscode"
+}
