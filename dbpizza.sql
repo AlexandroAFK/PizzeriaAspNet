@@ -73,4 +73,7 @@ INSERT INTO `pizza` (`id`, `nombre`, `precio`) VALUES
 (9,	'Pizza Carbonara',	13.50),
 (10,	'Pizza Napolitana',	10.75);
 
+ALTER TABLE pedidos
+ADD COLUMN fecha TIMESTAMP DEFAULT NOW();
+
 -- 2024-11-06 05:00:04
